@@ -16,7 +16,8 @@ def start():
 def grades():
     if (not session.get("username") or not session.get("password")):
         return redirect("/")
-    return render_template("grades.html", user_data=session.get("data").get("data"))
+    return render_template("grades.html",
+                           user_data=get_data(session.get("username"), session.get("password")).get("data"))
 
 
 @server.route("/login", methods=["POST", ])
@@ -30,17 +31,22 @@ def login():
     session["username"] = username.lower()
     session["password"] = password
 
+    data = get_data(session.get("username"), session.get("password"))
+
+    if (data.get("code") != 200):
+        logout()
+        return redirect("/")
+
+    return redirect("/grades")
+
+
+def get_data(username, password):
     data = {
         "username": username.lower(),
         "password": password
     }
     response = make_request(data)
-    if response.status_code == 200:
-        session["data"] = response.json()
-    else:
-        return redirect("/logout")
-
-    return redirect("/grades")
+    return response.json()
 
 
 @server.route("/logout")
