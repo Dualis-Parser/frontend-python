@@ -7,6 +7,8 @@ server = Flask(__name__)
 @server.route("/", methods=["GET", "POST"])
 def start():
     session["bootstrap_path"] = "https://drrago.de/bootstrap.min.css"
+    if (session.get("username") and session.get("password")):
+        return redirect("/grades")
     return render_template("index.html")
 
 
