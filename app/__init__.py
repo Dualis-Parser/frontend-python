@@ -37,7 +37,6 @@ def login():
     response = make_request(data)
     if response.status_code == 200:
         session["data"] = response.json()
-        print(session.get("data"))
     else:
         return redirect("/logout")
 
