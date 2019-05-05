@@ -1,10 +1,11 @@
 import requests
+import werkzeug.exceptions
 from flask import Flask, render_template, session, request, redirect
 
 server = Flask(__name__)
 
 
-@server.route("/", methods=["GET", "POST"])
+@server.route("/", methods=["GET", ])
 def start():
     session["bootstrap_path"] = "https://drrago.de/bootstrap.min.css"
     if (session.get("username") and session.get("password")):
@@ -65,3 +66,26 @@ def imprint():
 
 def make_request(data):
     return requests.get('http://localhost:8081/dualis/user', json=data)
+
+
+@server.errorhandler(Exception)
+def exception_handler(error):
+    """
+    Return a error json string. If it is a werkzeug error (like 404 or 400) send a specific message, otherwise
+
+    :param error: the exception that occurred
+    :type error: Exception or werkzeug.exceptions.HTTPException
+
+    :return: the template to render
+    """
+
+    # determine whether the exception is a HTTP exception
+    if (issubclass(type(error), werkzeug.exceptions.HTTPException)):
+        error_files = [400, 401, 403, 404, 405, 500, 501, 502, 503, 520, 521, 533]
+        return_code = error.code
+        if error.code not in error_files:
+            return_code = 500
+    else:
+        return_code = 500
+
+    return render_template("ErrorPages/HTTP%d.html" % return_code), return_code
