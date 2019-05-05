@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %} - {{ user_data['name'] }}{% endblock %}
+{% block content %}
+    <div class="container my-5">
+        <p class="h2 mb-5">Hello {{ user_data['name'] }}!
+            {% if cached %}
+                <a class="h4"><span class="badge badge-primary">Cached results, <b>{{ cached }}</b> seconds left</span></a>
+            {% endif %}
+        </p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Module</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Grade</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for module in user_data['modules'] %}
+                <tr class="table-{% if module['passed'] %}success{% else %}primary{% endif %} {% if module['grades']|length == 0 %} d-none d-md-table-row {% endif %} {{ module['module_no'] }}">
+                    <th scope="col">{{ module['module_name'] }} ({{ module['credits'] }})</th>
+                    <td></td>
+                    <th>{{ module['final_grade'] }} {% if module['passed'] %} (passed){% endif %}</th>
+                </tr>
+                {% for grade in module['grades'] %}
+                    <tr>
+                        <th scope="col"></th>
+                        <td>{{ grade["name"] }}</td>
+                        <td>{{ grade["grade"] }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

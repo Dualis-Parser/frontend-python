@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %} - {{ session.get("username") }}{% endblock %}
+{% block content %}
+    <div class="container my-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="alert alert-primary col-lg-6 col-md-8 col-sm-10 col-11" role="alert">
+                <form action="/toggle_signup_watcher" method="post">
+                    <p>
+                        You will be notified via mail whenever a new grade is found for your username and password
+                        combination
+                    </p>
+                    <p>
+                        By clicking on continue you agree that your username and password as well as your grades will be
+                        stored encrypted (password only) in a database until you remove the subscription.
+                    </p>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">@</span>
+                        </div>
+                        <input type="email" name="email" class="form-control" placeholder="E-Mail" aria-label="E-Mail"
+                               aria-describedby="basic-addon1">
+                        <input class="btn btn-danger ml-2" value="Continue" type="submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

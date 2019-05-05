@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center align-items-center mt-5">
+            <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Holy guacamole!</strong> {{ error }}
+                            </div>
+                        {% endif %}
+                        <form method="post" action="/login">
+                            <div class="form-group">
+                                <label for="username">Email address</label>
+                                <input type="text" name="username" class="form-control" id="username"
+                                       aria-describedby="userHelp"
+                                       placeholder="Enter username">
+                                <small id="userHelp" class="form-text text-muted">Your DHBW username <b>with or without</b> the
+                                    email suffix
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" name="password" class="form-control" id="password"
+                                       placeholder="Password">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="alert alert-info mt-4" role="alert">
+                                By submitting you agree that your provided data is stored temporarily to login on <a
+                                    href="https://dualis.dhbw.de">dualis.dhbw.de</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
