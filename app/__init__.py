@@ -17,8 +17,9 @@ def start():
 def grades():
     if (not session.get("username") or not session.get("password")):
         return redirect("/")
-    return render_template("grades.html",
-                           user_data=get_data(session.get("username"), session.get("password")).get("data"))
+
+    data = get_data(session.get("username"), session.get("password")).get("data")
+    return render_template("grades.html", user_data=data)
 
 
 @server.route("/login", methods=["POST", ])
@@ -32,21 +33,21 @@ def login():
     session["username"] = username.lower()
     session["password"] = password
 
-    data = get_data(session.get("username"), session.get("password"))
+    data = get_data(session.get("username"), session.get("password"), "http://localhost:8081/dualis/user/validate")
 
-    if (data.get("code") != 200):
+    if not data.get("data", False):
         logout()
         return redirect("/")
 
     return redirect("/grades")
 
 
-def get_data(username, password):
+def get_data(username, password, url='http://localhost:8081/dualis/user'):
     data = {
         "username": username.lower(),
         "password": password
     }
-    response = make_request(data)
+    response = make_request(data, url)
     return response.json()
 
 
@@ -64,8 +65,8 @@ def imprint():
     return render_template("imprint.html")
 
 
-def make_request(data):
-    return requests.get('http://localhost:8081/dualis/user', json=data)
+def make_request(data, url):
+    return requests.get(url, json=data)
 
 
 @server.errorhandler(Exception)
