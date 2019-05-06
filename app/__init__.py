@@ -8,6 +8,11 @@ from flask import Flask, render_template, session, request, redirect
 server = Flask(__name__)
 
 
+@server.route("/favicon.ico", methods=["GET", ])
+def favicon():
+    return redirect("https://www.dhbw.de/favicon.ico")
+
+
 @server.route("/", methods=["GET", ])
 def start():
     session["bootstrap_path"] = "https://drrago.de/bootstrap.min.css"
@@ -28,9 +33,10 @@ def grades():
     else:
         session["cached"] = 120 - (time.time() - session.get("time"))
 
-    if (session.get("data").get("data").get("code") != 200):
+    if (session.get("data").get("code") != 200):
         raise werkzeug.exceptions.InternalServerError
-    return render_template("grades.html", user_data=session.get("data").get("data"), cached=round(session.get("cached")))
+    return render_template("grades.html", user_data=session.get("data").get("data"),
+                           cached=round(session.get("cached")))
 
 
 @server.route("/login", methods=["POST", ])
@@ -90,7 +96,6 @@ def exception_handler(error):
 
     :return: the template to render
     """
-    logging.exception("err")
 
     # determine whether the exception is a HTTP exception
     if (issubclass(type(error), werkzeug.exceptions.HTTPException)):
