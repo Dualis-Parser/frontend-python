@@ -22,13 +22,15 @@ def grades():
         return redirect("/")
 
     if (time.time() - session.get("time", 0) > 120):
-        session["data"] = get_data(session.get("username"), session.get("password")).get("data")
+        session["data"] = get_data(session.get("username"), session.get("password"))
         session["time"] = time.time()
         session["cached"] = False
     else:
         session["cached"] = 120 - (time.time() - session.get("time"))
 
-    return render_template("grades.html", user_data=session["data"], cached=round(session.get("cached")))
+    if (session.get("data").get("data").get("code") != 200):
+        raise werkzeug.exceptions.InternalServerError
+    return render_template("grades.html", user_data=session.get("data").get("data"), cached=round(session.get("cached")))
 
 
 @server.route("/login", methods=["POST", ])
