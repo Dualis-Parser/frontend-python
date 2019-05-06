@@ -1,3 +1,6 @@
+import logging
+import time
+
 import requests
 import werkzeug.exceptions
 from flask import Flask, render_template, session, request, redirect
@@ -18,8 +21,14 @@ def grades():
     if (not session.get("username") or not session.get("password")):
         return redirect("/")
 
-    data = get_data(session.get("username"), session.get("password")).get("data")
-    return render_template("grades.html", user_data=data)
+    if (time.time() - session.get("time", 0) > 120):
+        session["data"] = get_data(session.get("username"), session.get("password")).get("data")
+        session["time"] = time.time()
+        session["cached"] = False
+    else:
+        session["cached"] = 120 - (time.time() - session.get("time"))
+
+    return render_template("grades.html", user_data=session["data"], cached=round(session.get("cached")))
 
 
 @server.route("/login", methods=["POST", ])
@@ -87,6 +96,7 @@ def exception_handler(error):
         if error.code not in error_files:
             return_code = 500
     else:
+        logging.exception(type(error).__name__)
         return_code = 500
 
     return render_template("ErrorPages/HTTP%d.html" % return_code), return_code
