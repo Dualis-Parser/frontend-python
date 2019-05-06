@@ -90,6 +90,7 @@ def exception_handler(error):
 
     :return: the template to render
     """
+    logging.exception("err")
 
     # determine whether the exception is a HTTP exception
     if (issubclass(type(error), werkzeug.exceptions.HTTPException)):
