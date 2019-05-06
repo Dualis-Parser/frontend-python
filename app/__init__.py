@@ -8,11 +8,6 @@ from flask import Flask, render_template, session, request, redirect
 server = Flask(__name__)
 
 
-@server.route("/avicon.ico", methods=["GET", ])
-def favicon():
-    return redirect("https://www.dhbw.de/favicon.ico")
-
-
 @server.route("/", methods=["GET", ])
 def start():
     session["bootstrap_path"] = "https://drrago.de/bootstrap.min.css"
